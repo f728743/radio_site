@@ -1,0 +1,59 @@
+# Настройки IDE и редакторов
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Логи
+*.log
+logs/
+
+# Временные файлы
+*.tmp
+*.temp
+.cache/
+
+# Файлы операционной системы
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Файлы окружения и конфигурации с чувствительными данными
+.env
+.env.local
+.env.production
+config/database.php  # Исключаем файл с настройками БД
+
+# Файлы Composer (если будете использовать)
+vendor/
+composer.lock
+
+# Файлы сессий
+sess_*
+
+# Кэш PHP
+/*.cache.php
+
+# Файлы загрузок (если будут)
+uploads/
+tmp/
+
+# Резервные копии баз данных
+*.dump
+
+# Файлы веб-сервера
+.htaccess
+error_log
+
+# Файлы npm (если будет фронтенд)
+node_modules/
+package-lock.json
+
+# Файлы сборки
+/dist
+/build

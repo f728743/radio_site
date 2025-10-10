@@ -1,0 +1,50 @@
+//================================================================================================
+нужен запрос для stationuuid с url = "https://radio.mp3islam.com/listen/abdulbasit/radio.mp3"  
+которой нет в banned_stations
+
+Вот SQL запрос для поиска stationuuid с указанным URL, который отсутствует в banned_stations:
+
+SELECT rs.stationuuid 
+FROM radio_stations rs 
+WHERE rs.url = 'https://radio.mp3islam.com/listen/abdulbasit/radio.mp3' 
+  AND rs.stationuuid NOT IN (
+    SELECT bs.stationuuid 
+    FROM banned_stations bs 
+    WHERE bs.stationuuid IS NOT NULL
+  );
+
+'525f1270-5011-4351-9272-0901b93aa860'
+
+//================================================================================================
+нужен запрос который показывает все stationuuid для станций у которых url 
+такой же как у станции с id '525f1270-5011-4351-9272-0901b93aa860'
+
+SELECT stationuuid 
+FROM radio_stations 
+WHERE url = (
+    SELECT url 
+    FROM radio_stations 
+    WHERE stationuuid = '525f1270-5011-4351-9272-0901b93aa860'
+);
+
+...
+01cc63d7-29f0-47c5-9893-8ee06079e30c
+01dd819d-3f79-4285-b383-89395e820530
+
+0866d210-feb9-48ae-9084-84f3d3e6bb60
+09bc2ad2-8769-4671-9956-d3df1f5cf936
+0bee6b6f-5a6e-4a2e-8542-389cd2a7a216
+0c1bf14f-73f9-4c1e-830e-3b6442ca416c
+0c8c9536-0e2e-457b-9c1a-f3a06b0d2b67
+
+
+//================================================================================================
+нужен запрос который удаляет записи из banned_stations для stationuuid
+'01cc63d7-29f0-47c5-9893-8ee06079e30c','01dd819d-3f79-4285-b383-89395e820530'
+
+
+DELETE FROM banned_stations 
+WHERE stationuuid IN (
+    '01cc63d7-29f0-47c5-9893-8ee06079e30c',
+    '01dd819d-3f79-4285-b383-89395e820530'
+);
