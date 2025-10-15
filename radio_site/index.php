@@ -92,7 +92,7 @@ require_once 'config/app.php';
             
             try {
                 // Теперь baseUrl определена и содержит правильное значение
-                const apiUrl = `${baseUrl}/api/search?q=${encodeURIComponent(query)}&type=${type}`;
+                const apiUrl = `/api/search?q=${encodeURIComponent(query)}&type=${type}`;
                 console.log('🔍 API Request:', apiUrl);
                 
                 const response = await fetch(apiUrl);
