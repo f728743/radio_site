@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
     try {
         $manager = new RadioStationManager();
-        $results = $manager->searchStations($query, $type, $page, $limit);
+        $results = $manager->searchActiveStations($query, $type, $page, $limit);
         
         echo json_encode([
             'success' => true,

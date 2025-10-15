@@ -4,6 +4,7 @@ require_once __DIR__ . '/../config/database.php';
 class RadioStationManager {
     private $db;
     private $itemsPerPage = 300;
+    private const REASON_DUPLICATE = 7;
     
     public function __construct() {
         $this->db = getDatabaseConnection();
@@ -26,7 +27,7 @@ class RadioStationManager {
             WHERE rs.url IS NOT NULL 
                 AND rs.url != ''
                 AND rs.stationuuid NOT IN (
-                    SELECT stationuuid FROM banned_stations WHERE reason_id = 7
+                    SELECT stationuuid FROM banned_stations WHERE reason_id = " . self::REASON_DUPLICATE . "
                 )
             GROUP BY rs.url
             HAVING COUNT(*) > 1
@@ -42,7 +43,7 @@ class RadioStationManager {
         $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($groups as &$group) {
-            $group['stations'] = $this->getStationsByUrl($group['url']);
+            $group['stations'] = $this->getNotBannedAsDuplicateStationsByUrl($group['url']);
         }
         
         return $groups;
@@ -56,7 +57,7 @@ class RadioStationManager {
                 FROM radio_stations
                 WHERE url IS NOT NULL AND url != ''
                 AND stationuuid NOT IN (
-                    SELECT stationuuid FROM banned_stations WHERE reason_id = 7
+                    SELECT stationuuid FROM banned_stations WHERE reason_id = " . self::REASON_DUPLICATE . "
                 )
                 GROUP BY url
                 HAVING COUNT(*) > 1
@@ -67,7 +68,7 @@ class RadioStationManager {
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
     
-    private function getStationsByUrl($url) {
+    private function getStationExcludingDuplicatesByUrl($url) {
         $sql = "
             SELECT 
                 stationuuid, name, url, favicon, 
@@ -76,7 +77,7 @@ class RadioStationManager {
             FROM radio_stations 
             WHERE url = :url
                 AND stationuuid NOT IN (
-                    SELECT stationuuid FROM banned_stations WHERE reason_id = 7
+                    SELECT stationuuid FROM banned_stations WHERE reason_id = " . self::REASON_DUPLICATE . "
                 )
             ORDER BY 
                 COALESCE(votes, 0) DESC, 
@@ -91,7 +92,7 @@ class RadioStationManager {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function banStations($stationUUIDs, $reason_id = 7) {
+    public function banStations($stationUUIDs, $reason_id = self::REASON_DUPLICATE) {
         if (empty($stationUUIDs)) {
             error_log("No station UUIDs provided for banning");
             return 0;
@@ -139,7 +140,7 @@ class RadioStationManager {
     }
     
     // Новые методы для API поиска
-    public function searchStations($query, $type = 'name', $page = 1, $limit = 50) {
+    public function searchActiveStations($query, $type = 'name', $page = 1, $limit = 50) {
         $offset = ($page - 1) * $limit;
         
         $whereConditions = [
@@ -158,7 +159,7 @@ class RadioStationManager {
             FROM radio_stations rs
             WHERE {$condition}
                 AND rs.stationuuid NOT IN (
-                    SELECT stationuuid FROM banned_stations WHERE reason_id = 7
+                    SELECT stationuuid FROM banned_stations
                 )
             ORDER BY 
                 COALESCE(rs.votes, 0) DESC, 
@@ -175,12 +176,12 @@ class RadioStationManager {
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
-            error_log("Database error in searchStations: " . $e->getMessage());
+            error_log("Database error in searchActiveStations: " . $e->getMessage());
             return [];
         }
     }
     
-    public function getStationByUUID($uuid) {
+    public function getActiveStationByUUID($uuid) {
         $sql = "
             SELECT 
                 stationuuid, name, url, favicon, 
@@ -189,7 +190,7 @@ class RadioStationManager {
             FROM radio_stations 
             WHERE stationuuid = :uuid
                 AND stationuuid NOT IN (
-                    SELECT stationuuid FROM banned_stations WHERE reason_id = 7
+                    SELECT stationuuid FROM banned_stations
                 )
         ";
         

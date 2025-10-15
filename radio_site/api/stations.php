@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
     try {
         $manager = new RadioStationManager();
-        $station = $manager->getStationByUUID($uuid);
+        $station = $manager->getActiveStationByUUID($uuid);
         
         if ($station) {
             echo json_encode([
