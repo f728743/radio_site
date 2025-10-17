@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админка - Управление дубликатами радиостанций</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/admin.css">
+    <base href="<?= ADMIN_URL ?>/">
 </head>
 <body>
     <div class="container">

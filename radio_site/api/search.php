@@ -41,18 +41,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
     try {
         $manager = new RadioStationManager();
-        $results = $manager->searchActiveStations($query, $type, $page, $limit);
+        
+        // Поиск реальных радиостанций
+        $realRadio = $manager->searchActiveStations($query, $type, $page, $limit);
+        
+        // Поиск SIM радиостанций (только для типов name и tag)
+        $simRadio = [];
+        if ($type === 'name' || $type === 'tag') {
+            $simRadio = $manager->searchSimStations($query, $type);
+        }
         
         echo json_encode([
             'success' => true,
-            'data' => $results,
+            'real_radio' => $realRadio,
+            'sim_radio' => $simRadio,
             'query' => $query,
-            'type' => $type,
-            'pagination' => [
-                'page' => $page,
-                'limit' => $limit,
-                'total' => count($results)
-            ]
+            'type' => $type
         ]);
         
     } catch(Exception $e) {

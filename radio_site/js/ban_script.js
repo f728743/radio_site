@@ -58,9 +58,7 @@ function banAllSelected() {
     banStations(uuidsToBan);
 }
 
-function banStations(uuids, groupElement = null) {
-    console.log("Banning UUIDs:", uuids);
-    
+function banStations(uuids, groupElement = null) {    
     const loading = document.getElementById('loading');
     loading.style.display = 'block';
     
@@ -74,14 +72,23 @@ function banStations(uuids, groupElement = null) {
         formData.append('station_uuids[]', uuid);
     });
     
-    fetch('<?= ADMIN_URL ?>/ajax/ban_stations.php', {
+    // Получаем правильный URL для админки
+    const adminUrl = document.querySelector('base')?.href || '';
+    const ajaxUrl = `${adminUrl}ajax/ban_stations.php`;
+    
+    
+    fetch(ajaxUrl, {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         loading.style.display = 'none';
-        console.log("Response:", data);
         
         if (data.success) {
             alert(`Успешно забанено станций: ${data.banned_count}`);
@@ -97,7 +104,16 @@ function banStations(uuids, groupElement = null) {
     })
     .catch(error => {
         loading.style.display = 'none';
-        console.error('Error:', error);
-        alert('Ошибка при выполнении запроса');
+        console.error('Fetch error:', error);
+        
+        // Более информативное сообщение об ошибке
+        let errorMessage = 'Ошибка при выполнении запроса';
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage += ' - проблема с сетью или URL';
+        } else if (error.message.includes('HTTP error')) {
+            errorMessage += ` - сервер вернул ошибку: ${error.message}`;
+        }
+        
+        alert(errorMessage + '\n\nПроверьте консоль для деталей.');
     });
 }

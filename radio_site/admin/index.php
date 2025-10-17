@@ -1,8 +1,8 @@
 <?php
 require_once '../config/app.php';
-require_once '../classes/RadioStationManager.php';
+require_once '../classes/DuplicateStationManager.php'; 
 
-$manager = new RadioStationManager();
+$manager = new DuplicateStationManager(); 
 $page = max(1, intval($_GET['page'] ?? 1));
 $duplicateGroups = $manager->getDuplicateGroups($page);
 $totalGroups = $manager->getTotalDuplicateGroups();

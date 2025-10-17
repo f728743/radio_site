@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS `sim_radio_stations` (
 
 -- Вставляем серии радиостанций
 INSERT INTO `sim_radio_series` (`id`, `url`, `title`, `logo`) VALUES
-('gta_4_radio', 'https://media.githubusercontent.com/media/maxerohingta/convert_gta5_audio/refs/heads/main/converted_m4a/new_sim_radio_stations.json', 'GTA IV Radio', 'gta_iv'),
-('gta_5_radio', 'https://media.githubusercontent.com/media/maxerohingta/convert_gta4_audio/refs/heads/main/result/new_sim_radio_stations.json', 'GTA V Radio', 'textures/gta_5_radio');
+('gta_4_radio', 'https://media.githubusercontent.com/media/maxerohingta/convert_gta4_audio/refs/heads/main/result/new_sim_radio_stations.json', 'GTA IV Radio', 'gta_iv'),
+('gta_5_radio', 'https://media.githubusercontent.com/media/maxerohingta/convert_gta5_audio/refs/heads/main/converted_m4a/new_sim_radio_stations.json', 'GTA V Radio', 'textures/gta_5_radio');
 
 -- Вставляем радиостанции для GTA IV
 INSERT INTO `sim_radio_stations` (`id`, `series_id`, `logo`, `tags`, `title`) VALUES

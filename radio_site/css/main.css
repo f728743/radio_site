@@ -436,3 +436,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #5a6fd8, #6a42a0);
 }
+
+.sim-station {
+    margin: 10px 0;
+    padding: 12px;
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.station-stations {
+    margin-top: 15px;
+}
