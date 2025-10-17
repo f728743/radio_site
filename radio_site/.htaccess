@@ -1,0 +1,21 @@
+RewriteEngine On
+
+# Разрешить доступ к существующим файлам и папкам
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
+
+# API routes - теперь перенаправляем на конкретные файлы
+RewriteRule ^api/search/?$ api/search.php [L,QSA]
+RewriteRule ^api/stations/?$ api/stations.php [L,QSA]
+
+# Admin route
+RewriteRule ^admin/?$ admin/index.php [L,QSA]
+
+RewriteRule ^images/cache/ - [L]
+
+# Главная страница
+RewriteRule ^$ index.php [L]
+
+# Для всех остальных запросов - 404
+RewriteRule . - [R=404,L]
