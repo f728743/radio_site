@@ -155,8 +155,18 @@ class RadioStationManager {
             SELECT 
                 rs.stationuuid, rs.name, rs.url, rs.favicon, 
                 rs.votes, rs.clickcount, rs.clicktrend, rs.country, rs.language,
-                rs.bitrate, rs.codec, rs.lastcheckok, rs.tags
+                rs.bitrate, rs.codec, rs.lastcheckok, rs.tags,
+                -- Добавляем кэшированные favicon'ы через LEFT JOIN
+                CASE 
+                    WHEN ic.status = 'success' THEN CONCAT(:cacheBaseUrl, '/', ic.local_path)
+                    ELSE rs.favicon
+                END as cached_favicon,
+                ic.status as cache_status
             FROM radio_stations rs
+            LEFT JOIN image_cache ic ON (
+                rs.favicon = ic.original_url 
+                AND ic.status = 'success'
+            )
             WHERE {$condition}
                 AND rs.stationuuid NOT IN (
                     SELECT stationuuid FROM banned_stations
@@ -170,6 +180,7 @@ class RadioStationManager {
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':query', '%' . $query . '%');
+            $stmt->bindValue(':cacheBaseUrl', $this->getCacheBaseUrl());
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
@@ -180,25 +191,40 @@ class RadioStationManager {
             return [];
         }
     }
-    
+
     public function getActiveStationByUUID($uuid) {
         $sql = "
             SELECT 
-                stationuuid, name, url, favicon, 
-                votes, clickcount, clicktrend, country, language,
-                bitrate, codec, lastcheckok, tags, homepage
-            FROM radio_stations 
-            WHERE stationuuid = :uuid
-                AND stationuuid NOT IN (
+                rs.stationuuid, rs.name, rs.url, rs.favicon, 
+                rs.votes, rs.clickcount, rs.clicktrend, rs.country, rs.language,
+                rs.bitrate, rs.codec, rs.lastcheckok, rs.tags, rs.homepage,
+                -- Добавляем кэшированные favicon'ы через LEFT JOIN
+                CASE 
+                    WHEN ic.status = 'success' THEN CONCAT(:cacheBaseUrl, '/', ic.local_path)
+                    ELSE rs.favicon
+                END as cached_favicon,
+                ic.status as cache_status
+            FROM radio_stations rs
+            LEFT JOIN image_cache ic ON (
+                rs.favicon = ic.original_url 
+                AND ic.status = 'success'
+            )
+            WHERE rs.stationuuid = :uuid
+                AND rs.stationuuid NOT IN (
                     SELECT stationuuid FROM banned_stations
                 )
         ";
         
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':uuid', $uuid);
+        $stmt->bindValue(':cacheBaseUrl', $this->getCacheBaseUrl());
         $stmt->execute();
         
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    private function getCacheBaseUrl() {
+        return BASE_URL . '/images/cache';
     }
 }
 ?>

@@ -15,7 +15,6 @@ require_once 'config/app.php';
             <h1>📻 Radio Station API Test</h1>
             <p>Тестирование поиска радиостанций для мобильного приложения</p>
             <div class="nav-links">
-                <a href="home" class="nav-link">Главная</a>
                 <a href="admin" class="nav-link">Админка</a>
             </div>
         </header>

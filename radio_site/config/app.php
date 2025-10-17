@@ -1,16 +1,7 @@
 <?php
-// Автоматическое определение базового URL
-$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$host = $_SERVER['HTTP_HOST'];
-$script_path = dirname($_SERVER['SCRIPT_NAME']);
+// Принудительно используем HTTPS для iOS compatibility
+$base_url = 'https://cx10577.tw1.ru';
 
-// Формируем базовый URL
-$base_url = rtrim($protocol . '://' . $host . $script_path, '/');
-
-// Если мы в корне, убираем последний слэш
-if ($base_url === $protocol . '://' . $host) {
-    $base_url = $protocol . '://' . $host;
-}
 
 define('BASE_URL', $base_url);
 define('ADMIN_URL', BASE_URL . '/admin');

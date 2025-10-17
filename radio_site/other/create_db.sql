@@ -69,3 +69,23 @@ CREATE TABLE `radio_stations` (
   KEY `idx_rs_duplicate_search` (`url_resolved`(100),`url`(100)),
   KEY `idx_rs_popularity` (`votes` DESC,`clickcount` DESC)
 );
+
+-- Добавляем в other/create_db.sql
+DROP TABLE IF EXISTS `image_cache`;
+CREATE TABLE `image_cache` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `stationuuid` varchar(255) NOT NULL,
+  `original_url` varchar(1000) NOT NULL,
+  `local_path` varchar(255) NOT NULL,
+  `file_size` int DEFAULT NULL,
+  `mime_type` varchar(100) DEFAULT NULL,
+  `status` enum('pending','success','error') DEFAULT 'pending',
+  `error_message` text,
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_original_url` (`original_url`(255)),
+  KEY `idx_stationuuid` (`stationuuid`),
+  KEY `idx_status` (`status`),
+  KEY `idx_created_at` (`created_at`)
+);

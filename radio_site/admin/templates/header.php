@@ -11,5 +11,7 @@
     <div class="container">
         <nav class="admin-nav">
             <a href="<?= BASE_URL ?>" class="nav-link">← На главную</a>
+            <a href="<?= ADMIN_URL ?>" class="nav-link">Дубликаты</a>
+            <a href="<?= ADMIN_URL ?>/image_cache.php" class="nav-link">Кэш изображений</a>
             <h1>Админ-панель</h1>
         </nav>
